@@ -1,7 +1,7 @@
 <component name="libraryTable">
-  <library name="MgntUtils-1.5.1.2">
+  <library name="okhttp-4.2.1">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Downloads/MgntUtils-1.5.1.2.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/jar_files/okhttp-4.2.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
