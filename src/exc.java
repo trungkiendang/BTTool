@@ -7,11 +7,12 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,11 +20,13 @@ public class exc {
     public static void main(String[] args) throws IOException {
 //        String s = Trans("en", "vi", "How old are you?");
 //        System.out.println(s);
+
+        prepareCache();
         xxx();
     }
 
     static void xxx() {
-        String path = "D:\\Workspaces\\Java\\Original";
+        String path = "D:\\3. Workspace\\wso2\\Original\\carbon-mediation-4.7.61";
         String f1 = "Resources.properties";
         String f2 = "JSResources.properties";
         Path start = Paths.get(path);
@@ -34,9 +37,7 @@ public class exc {
                     .collect(Collectors.toList());
             int i = 1;
             for (Path p : collect) {
-                if (Files.isDirectory(p))
-                    continue;
-                else {
+                if (!Files.isDirectory(p)) {
                     String fn = p.getFileName().toString();
                     if (fn.equals(f1) || fn.equals(f2)) {
                         //xu ly decode
@@ -51,7 +52,37 @@ public class exc {
         }
     }
 
+    static Hashtable<String, String> CACHE = new Hashtable<>();
+    static File cacehFile = new File("trans.cache");
+
+    static void prepareCache() {
+        if (!cacehFile.exists()) {
+            try {
+                cacehFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            List<String> lst = Files.readAllLines(cacehFile.toPath());
+            for (String s : lst) {
+                String[] arr = s.split("=");
+                if (arr.length == 2)
+                    CACHE.put(arr[0], arr[1]);
+            }
+            System.out.println("Cache size: " + CACHE.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     static String Trans(String src, String tar, String s) {
+
+        //Xu ly cache
+        if (CACHE.containsKey(s))
+            return CACHE.get(s);
+
         String u = String.format("https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=%s&tl=%s&q=%s", src, tar, s);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
@@ -67,9 +98,17 @@ public class exc {
                 String sss = response.body().string();
                 System.out.println(sss);
                 GObj obj = new Gson().fromJson(sss, GObj.class);
-                if (obj != null && obj.getSentences().size() > 0)
-                    return obj.getSentences().get(0).getTrans();
-                else return s;
+                if (obj != null && obj.getSentences().size() > 0) {
+                    String trans = obj.getSentences().get(0).getTrans();
+
+                    //Luu vao cache memory
+                    CACHE.put(s, trans);
+                    System.out.println("Cache size: " + CACHE.size());
+                    //Luu xuong file, nho no bi tat dot ngot
+                    Files.write(cacehFile.toPath(), (s + "=" + trans + "\r\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+                    
+                    return trans;
+                } else return s;
             } else {
                 System.out.println(s + " - Trans err: " + code);
                 return s;
@@ -100,8 +139,10 @@ public class exc {
                     if (encode) {
                         sb.append(StringEscapeUtils.escapeJava(arr[1]));
                     } else {
-                        String uns = StringEscapeUtils.unescapeJava(arr[1]);
-                        sb.append(Trans("en", "vi", uns));
+                        String uns = StringEscapeUtils.unescapeJava(arr[1]).trim();
+                        String trans = Trans("en", "vi", uns).trim();
+
+                        sb.append(trans);
                     }
                     lstResult.add(sb.toString());
                 } else {

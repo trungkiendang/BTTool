@@ -13,19 +13,19 @@ public class GObj {
     @SerializedName("sentences")
     @Expose
     private List<Sentence> sentences = null;
-    @SerializedName("dict")
-    @Expose
-    private List<Dict> dict = null;
-    @SerializedName("src")
-    @Expose
-    private String src;
-    @SerializedName("alternative_translations")
-    @Expose
-    private List<AlternativeTranslation> alternativeTranslations = null;
-
-    @SerializedName("ld_result")
-    @Expose
-    private LdResult ldResult;
+//    @SerializedName("dict")
+//    @Expose
+//    private List<Dict> dict = null;
+//    @SerializedName("src")
+//    @Expose
+//    private String src;
+//    @SerializedName("alternative_translations")
+//    @Expose
+//    private List<AlternativeTranslation> alternativeTranslations = null;
+//
+//    @SerializedName("ld_result")
+//    @Expose
+//    private LdResult ldResult;
 
     public List<Sentence> getSentences() {
         return sentences;
@@ -35,37 +35,37 @@ public class GObj {
         this.sentences = sentences;
     }
 
-    public List<Dict> getDict() {
-        return dict;
-    }
-
-    public void setDict(List<Dict> dict) {
-        this.dict = dict;
-    }
-
-    public String getSrc() {
-        return src;
-    }
-
-    public void setSrc(String src) {
-        this.src = src;
-    }
-
-    public List<AlternativeTranslation> getAlternativeTranslations() {
-        return alternativeTranslations;
-    }
-
-    public void setAlternativeTranslations(List<AlternativeTranslation> alternativeTranslations) {
-        this.alternativeTranslations = alternativeTranslations;
-    }
-
-
-    public LdResult getLdResult() {
-        return ldResult;
-    }
-
-    public void setLdResult(LdResult ldResult) {
-        this.ldResult = ldResult;
-    }
+//    public List<Dict> getDict() {
+//        return dict;
+//    }
+//
+//    public void setDict(List<Dict> dict) {
+//        this.dict = dict;
+//    }
+//
+//    public String getSrc() {
+//        return src;
+//    }
+//
+//    public void setSrc(String src) {
+//        this.src = src;
+//    }
+//
+//    public List<AlternativeTranslation> getAlternativeTranslations() {
+//        return alternativeTranslations;
+//    }
+//
+//    public void setAlternativeTranslations(List<AlternativeTranslation> alternativeTranslations) {
+//        this.alternativeTranslations = alternativeTranslations;
+//    }
+//
+//
+//    public LdResult getLdResult() {
+//        return ldResult;
+//    }
+//
+//    public void setLdResult(LdResult ldResult) {
+//        this.ldResult = ldResult;
+//    }
 
 }
