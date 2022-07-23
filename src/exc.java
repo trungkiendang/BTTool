@@ -1,5 +1,7 @@
 import com.bt.GObj;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -18,15 +20,15 @@ import java.util.stream.Stream;
 
 public class exc {
     public static void main(String[] args) throws IOException {
-//        String s = Trans("en", "vi", "How old are you?");
-//        System.out.println(s);
+        String s = Trans("en", "vi", "authored 1 year ago");
+        System.out.println(s);
 
-        prepareCache();
-        xxx();
+       // prepareCache();
+       // xxx();
     }
 
     static void xxx() {
-        String path = "D:\\3. Workspace\\wso2\\Original\\carbon-mediation-4.7.61";
+        String path = "D:\\3. Workspace\\wso2\\Original\\carbon-multitenancy-4.8.1";
         String f1 = "Resources.properties";
         String f2 = "JSResources.properties";
         Path start = Paths.get(path);
@@ -95,20 +97,25 @@ public class exc {
             Response response = client.newCall(request).execute();
             int code = response.code();
             if (code == 200) {
-                String sss = response.body().string();
-                System.out.println(sss);
-                GObj obj = new Gson().fromJson(sss, GObj.class);
-                if (obj != null && obj.getSentences().size() > 0) {
-                    String trans = obj.getSentences().get(0).getTrans();
+                String sss = Objects.requireNonNull(response.body()).string();
+                try {
+                    GObj obj = new Gson().fromJson(sss, GObj.class);
+                    if (obj != null && obj.getSentences().size() > 0) {
+                        String trans = obj.getSentences().get(0).getTrans();
 
-                    //Luu vao cache memory
-                    CACHE.put(s, trans);
-                    System.out.println("Cache size: " + CACHE.size());
-                    //Luu xuong file, nho no bi tat dot ngot
-                    Files.write(cacehFile.toPath(), (s + "=" + trans + "\r\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
-                    
-                    return trans;
-                } else return s;
+                        //Luu vao cache memory
+                        CACHE.put(s, trans);
+                        System.out.println("Cache size: " + CACHE.size());
+                        //Luu xuong file, nho no bi tat dot ngot
+                        Files.write(cacehFile.toPath(), (s + "=" + trans + "\r\n").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
+
+                        return trans;
+                    } else return s;
+                }
+                catch (Exception e) {
+                    return JsonParser.parseString(sss).getAsJsonArray().get(0).toString();
+                }
+
             } else {
                 System.out.println(s + " - Trans err: " + code);
                 return s;
